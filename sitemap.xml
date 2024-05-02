@@ -2,26 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://mrenrique.github.io/projects/index.html</loc>
-    <lastmod>2024-05-02T09:59:37.457Z</lastmod>
+    <lastmod>2024-05-02T10:10:31.407Z</lastmod>
   </url>
   <url>
     <loc>https://mrenrique.github.io/projects/posts/making-a-word-cloud-by-scraping-an-article/index.html</loc>
-    <lastmod>2024-05-02T09:59:37.461Z</lastmod>
+    <lastmod>2024-05-02T10:10:31.415Z</lastmod>
   </url>
   <url>
     <loc>https://mrenrique.github.io/projects/posts/welcome/index.html</loc>
-    <lastmod>2024-05-02T09:59:37.461Z</lastmod>
+    <lastmod>2024-05-02T10:10:31.415Z</lastmod>
   </url>
   <url>
     <loc>https://mrenrique.github.io/projects/about.html</loc>
-    <lastmod>2024-05-02T09:59:37.457Z</lastmod>
+    <lastmod>2024-05-02T10:10:31.407Z</lastmod>
+  </url>
+  <url>
+    <loc>https://mrenrique.github.io/projects/posts/web-scraping-a-youtube-channel-with-selenium/index.html</loc>
+    <lastmod>2024-05-02T10:10:31.415Z</lastmod>
   </url>
   <url>
     <loc>https://mrenrique.github.io/projects/posts/web-scraping-de-tablas-html-desde-wikipedia/index.html</loc>
-    <lastmod>2024-05-02T09:59:37.461Z</lastmod>
+    <lastmod>2024-05-02T10:10:31.415Z</lastmod>
   </url>
   <url>
     <loc>https://mrenrique.github.io/projects/posts/post-with-code/index.html</loc>
-    <lastmod>2024-05-02T09:59:37.461Z</lastmod>
+    <lastmod>2024-05-02T10:10:31.415Z</lastmod>
   </url>
 </urlset>

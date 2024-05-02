@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/web-scraping-a-youtube-channel-with-selenium/index.html",
       "/posts/web-scraping-de-tablas-html-desde-wikipedia/index.html",
       "/posts/making-a-word-cloud-by-scraping-an-article/index.html",
       "/posts/post-with-code/index.html",
