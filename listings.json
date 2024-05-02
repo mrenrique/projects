@@ -3,6 +3,7 @@
     "listing": "/index.html",
     "items": [
       "/posts/web-scraping-a-youtube-channel-with-selenium/index.html",
+      "/posts/predicting-wild-blueberry-yield-using-supervised-ml.html",
       "/posts/data-preprocessing-with-pandas/index.html",
       "/posts/web-scraping-de-tablas-html-desde-wikipedia/index.html",
       "/posts/exploratory-data-analysis-youtube-channel-red-bull/index.html",
