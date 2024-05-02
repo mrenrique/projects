@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.554">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Enrique Mosqueira Rubio">
+<meta name="dcterms.date" content="2020-12-20">
+
+<title>Data Science Projects - Web Scraping de Tablas HTML desde Wikipedia (o Cualquier Página Web)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Data Science Projects</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Web Scraping de Tablas HTML desde Wikipedia (o Cualquier Página Web)</h1>
+            <p class="subtitle lead">Aprende Como Obtener Datos Tabulares HTML usando Pandas.</p>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Web Scraping</div>
+                <div class="quarto-category">Python</div>
+                <div class="quarto-category">Data Science</div>
+                <div class="quarto-category">Pandas</div>
+                <div class="quarto-category">Programming</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Enrique Mosqueira Rubio </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">2020-12-20</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#fase-1-conección-y-obtención-de-codigo-fuente" id="toc-fase-1-conección-y-obtención-de-codigo-fuente" class="nav-link active" data-scroll-target="#fase-1-conección-y-obtención-de-codigo-fuente">Fase 1: Conección y obtención de codigo fuente</a></li>
+  <li><a href="#fase-2-análisis-de-estructura-html-y-extracción-de-datos" id="toc-fase-2-análisis-de-estructura-html-y-extracción-de-datos" class="nav-link" data-scroll-target="#fase-2-análisis-de-estructura-html-y-extracción-de-datos">Fase 2: Análisis de estructura HTML y extracción de datos</a></li>
+  <li><a href="#fase-3-guardado-del-conjunto-de-datos" id="toc-fase-3-guardado-del-conjunto-de-datos" class="nav-link" data-scroll-target="#fase-3-guardado-del-conjunto-de-datos">Fase 3: Guardado del Conjunto de Datos</a></li>
+  <li><a href="#resumiendo-lo-realizado" id="toc-resumiendo-lo-realizado" class="nav-link" data-scroll-target="#resumiendo-lo-realizado">Resumiendo lo realizado</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p><a href="https://colab.research.google.com/github/mrenrique/projects/blob/main/posts/web-scraping-de-tablas-html-desde-wikipedia/index.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p>¿Alguna vez te topaste con alguna tabla de Wikipedia que justo necesitabas para tu investigación o proyecto de análisis? Como la tabla de medallas de los Juegos Panamericanos, Las Elecciones Presidenciales o datos de las Exportaciones de un Pais, ¿Si? Bueno, Aquí aprenderás como obtener datos de cualquier tabla.</p>
+<p>Esta es la tabla que buscamos obtener que contiene información del <a href="https://es.wikipedia.org/wiki/Provincia_de_Trujillo_(Per%C3%BA)">Censo de la Provincia de Trujillo del año 2017</a>. Para hacer <strong>Web Scraping</strong> a esta página, utilizaremos las bibliotecas <strong>Requests</strong> y <strong>Pandas</strong> de <strong>Python</strong>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="data:image/png;base64,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" class="img-fluid figure-img"></p>
+<figcaption>image.png</figcaption>
+</figure>
+</div>
+<p>Al finalizar este Tutorial, tendrás como <strong>resultado</strong> una tabla lista para su análisis. Lo podrás guardar en tu directorio de trabajo o descargar en tu computadora como <strong>archivo CSV</strong> (o el formato que gustes). Espero que te resulte útil; sin más que añadir… <strong>“Happy Coding!”</strong></p>
+<section id="fase-1-conección-y-obtención-de-codigo-fuente" class="level2">
+<h2 class="anchored" data-anchor-id="fase-1-conección-y-obtención-de-codigo-fuente">Fase 1: Conección y obtención de codigo fuente</h2>
+<p>Comenzaremos importando la biblioteca <code>requests</code> para realizar la petición <strong>HTTP</strong> que nos devolverá el <strong>código fuente</strong> de la página web y <code>pandas</code>, para usar su método <code>.read_html()</code> que nos ayudará a extraer todas las tablas HTML. Usaremos este método y no la biblioteca <code>Beautiful Soup</code> porque de esta forma es mucho más fácil y funciona bien en cualquier página web que contenga tablas HTML debido a su estructura simple de leer.</p>
+<blockquote class="blockquote">
+<p>Para tu conocimiento: Usando <code>.read_html()</code> no solo nos permite extraer tablas HTML desde un <strong>enlace</strong> (lo que usaremos hoy), sino también desde un <strong>archivo html</strong> o una <strong>cadena de caracteres (string)</strong> que contenga HTML.</p>
+</blockquote>
+<div id="cell-8" class="cell" data-outputid="2739da9c-ad68-4650-cf92-fb4114c9e819">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Hacer peticion HTTP</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Manipular código y guardar datos tabulares en archivo CSV</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># url de la página web a «escrapear»</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">'https://es.wikipedia.org/wiki/Provincia_de_Trujillo_(Per%C3%BA)'</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># pasar "User-agent" para simular interacción con la página usando Navegador web</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>headers <span class="op">=</span> {<span class="st">"User-agent"</span>: <span class="st">'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'</span>}</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>respuesta <span class="op">=</span> requests.get(url, headers<span class="op">=</span>headers)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># El código de respuesta &lt;200&gt; indicará que todo salió bien</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(respuesta)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;Response [200]&gt;</code></pre>
+</div>
+</div>
+<p>Aparte de la respuesta positiva que nos devolvió la petición, seguro te diste cuenta que pasamos el <strong>parámetro</strong> <code>headers</code> al <strong>método</strong> <code>requests.get()</code>, esto sirve para evitar que el servidor de la página web nos bloqueen el acceso. Aunque con <strong>Wikipedia</strong> no tenemos ese problema, otras páginas son restrictivas cuando se trata de bots tratando de «escrapear» sus datos. Siguiento esta buena práctica, nos ahorarremos dolores de cabeza luego.</p>
+<p>Por último, guardamos en una variable todas las tablas encontradas en el objecto HTML.</p>
+<div id="cell-11" class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>all_tables <span class="op">=</span> pd.read_html(respuesta.content, encoding <span class="op">=</span> <span class="st">'utf8'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="fase-2-análisis-de-estructura-html-y-extracción-de-datos" class="level2">
+<h2 class="anchored" data-anchor-id="fase-2-análisis-de-estructura-html-y-extracción-de-datos">Fase 2: Análisis de estructura HTML y extracción de datos</h2>
+<p>Ahora veamos cuantas tablas hay en la página web</p>
+<div id="cell-14" class="cell" data-outputid="a0a61e67-1f3f-441b-92f7-c2c01ab04749">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Total de tablas encontradas: </span><span class="sc">{</span><span class="bu">len</span>(all_tables)<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Total de tablas encontradas: 6</code></pre>
+</div>
+</div>
+<p>Debido a que hay varias tablas, usaremos el parámetro <code>match</code> y le pasaremos una palabra o frase que <strong>solo se encuentre en la tabla que nos interesa.</strong></p>
+<div id="cell-16" class="cell" data-outputid="b18c59ad-78fb-4284-c77d-caf0d3a8a409">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>matched_table <span class="op">=</span> pd.read_html(respuesta.text, match<span class="op">=</span><span class="st">'Fuente: Censos Nacionales 2017'</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># imprime numero de tablas que coinciden con parametro match</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Total de tablas encontradas: </span><span class="sc">{</span><span class="bu">len</span>(matched_table)<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Total de tablas encontradas: 1</code></pre>
+</div>
+</div>
+<p>Guardamos nuestra tabla de interés en una variable.</p>
+<div id="cell-18" class="cell" data-scrolled="true" data-outputid="31b35335-70dd-44af-8551-32f67f1baa2b">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Guardar tabla en variable con nombre semántico</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>censo_trujillo <span class="op">=</span> matched_table[<span class="dv">0</span>]</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificamos si es la tabla que buscamos</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>censo_trujillo.tail(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">UBIGEO</th>
+<th data-quarto-table-cell-role="th">Distrito</th>
+<th data-quarto-table-cell-role="th">Hogares</th>
+<th data-quarto-table-cell-role="th">Viviendas</th>
+<th data-quarto-table-cell-role="th">Población</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">8</td>
+<td>130109</td>
+<td>Salaverry</td>
+<td>5599</td>
+<td>5244</td>
+<td>18&nbsp;944</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">9</td>
+<td>130110</td>
+<td>Simbal</td>
+<td>1662</td>
+<td>1151</td>
+<td>4061</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10</td>
+<td>130111</td>
+<td>Víctor Larco Herrera</td>
+<td>19&nbsp;543</td>
+<td>18&nbsp;461</td>
+<td>68&nbsp;506</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">11</td>
+<td>NaN</td>
+<td>TOTAL</td>
+<td>273&nbsp;619</td>
+<td>250&nbsp;835</td>
+<td>970&nbsp;016</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">12</td>
+<td>Fuente: Censos Nacionales 2017: X de Población...</td>
+<td>Fuente: Censos Nacionales 2017: X de Población...</td>
+<td>Fuente: Censos Nacionales 2017: X de Población...</td>
+<td>Fuente: Censos Nacionales 2017: X de Población...</td>
+<td>Fuente: Censos Nacionales 2017: X de Población...</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<p>¡Bien! Es la tabla que buscamos exportar, pero vemos que las 2 últimas filas no son necesarias, por lo que pasamos a eliminarlas.</p>
+<div id="cell-20" class="cell" data-outputid="46a94171-f805-480b-e76e-3d7cdabe8b2c">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remover ultima(s) n fila(s)</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>censo_trujillo.drop(censo_trujillo.tail(<span class="dv">2</span>).index, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar si se eliminaron los registros no deseados</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>censo_trujillo.tail(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">UBIGEO</th>
+<th data-quarto-table-cell-role="th">Distrito</th>
+<th data-quarto-table-cell-role="th">Hogares</th>
+<th data-quarto-table-cell-role="th">Viviendas</th>
+<th data-quarto-table-cell-role="th">Población</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">9</td>
+<td>130110</td>
+<td>Simbal</td>
+<td>1662</td>
+<td>1151</td>
+<td>4061</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10</td>
+<td>130111</td>
+<td>Víctor Larco Herrera</td>
+<td>19&nbsp;543</td>
+<td>18&nbsp;461</td>
+<td>68&nbsp;506</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<p>Ahora asignaremos el <strong>UBIGEO</strong> como índice de la tabla.</p>
+<div id="cell-22" class="cell" data-outputid="ac58a41d-830e-4e67-9f07-442530be0be5">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>censo_trujillo.set_index(<span class="st">'UBIGEO'</span>, inplace <span class="op">=</span> <span class="va">True</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificamos el cambio de índice</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>censo_trujillo.head(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Distrito</th>
+<th data-quarto-table-cell-role="th">Hogares</th>
+<th data-quarto-table-cell-role="th">Viviendas</th>
+<th data-quarto-table-cell-role="th">Población</th>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">UBIGEO</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">130101</td>
+<td>Trujillo</td>
+<td>87&nbsp;963</td>
+<td>82&nbsp;236</td>
+<td>314&nbsp;939</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">130102</td>
+<td>El Porvenir</td>
+<td>57&nbsp;878</td>
+<td>50&nbsp;805</td>
+<td>190&nbsp;461</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<p>También, vemos que en las columnas <strong>Hogares,Viviendas y Población</strong> que contienen números, hay un <strong>espacio</strong> en medio de los números que le da <a href="https://www.wikipedia.org/">Wikipedia</a> como formato para <strong>mejorar su visualización</strong>. Sin embargo, necesitamo que nuestros datos numéricos estén limpios sin ningún simbolo o espacios para poder realizar operaciones.</p>
+<p>Removamos ese espacio que no aporta nuestros datos. Para ello usaremos la biblioteca <code>normalize</code>.</p>
+<div id="cell-24" class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> unicodedata <span class="im">import</span> normalize</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Creamos una funcion y lo correremos a toda nuestra tabla para quitar los molestos espacios en blanco.</p>
+<div id="cell-26" class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> remove_whitespace(x):</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Funcion para normalizar datos con Unicode para luego quitar los espacios usando .replace().</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Argumentos de entrada: Nombre de columna o lista con nombres de columnas.</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Retorna: columna o columnas sin espacios en blanco</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">isinstance</span>(x, <span class="bu">str</span>):</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> normalize(<span class="st">'NFKC'</span>, x).replace(<span class="st">' '</span>, <span class="st">''</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Aplicamos la funcion para quitar espacios en blanco a toda las columnas con datos numéricos.</p>
+<div id="cell-28" class="cell" data-outputid="907205ae-dfcb-4959-c79f-1f556ade135c">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Guardamos en variable nombre de columnas a quitar espacios en blanco</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>numeric_cols <span class="op">=</span> [<span class="st">'Hogares'</span>,<span class="st">'Viviendas'</span>,<span class="st">'Población'</span>]</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Aplicar función remove_whitespace a columnas en variable y las reemplazamos en tabla</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>censo_trujillo[numeric_cols] <span class="op">=</span> censo_trujillo[numeric_cols].applymap(remove_whitespace)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificamos si se quitaron los espacios en blanco</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>censo_trujillo.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Distrito</th>
+<th data-quarto-table-cell-role="th">Hogares</th>
+<th data-quarto-table-cell-role="th">Viviendas</th>
+<th data-quarto-table-cell-role="th">Población</th>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">UBIGEO</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">130101</td>
+<td>Trujillo</td>
+<td>87963</td>
+<td>82236</td>
+<td>314939</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">130102</td>
+<td>El Porvenir</td>
+<td>57878</td>
+<td>50805</td>
+<td>190461</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">130103</td>
+<td>Florencia De Mora</td>
+<td>7777</td>
+<td>8635</td>
+<td>37262</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">130104</td>
+<td>Huanchaco</td>
+<td>20206</td>
+<td>16534</td>
+<td>68409</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">130105</td>
+<td>La Esperanza</td>
+<td>49773</td>
+<td>47896</td>
+<td>189206</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<p>Ahora veamos los tipos de datos.</p>
+<div id="cell-30" class="cell" data-outputid="f732aa6a-798a-43c4-e6eb-b3bd5506f7b1">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar tipo de datos de la tabla</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>censo_trujillo.dtypes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>Distrito     object
+Hogares      object
+Viviendas    object
+Población    object
+dtype: object</code></pre>
+</div>
+</div>
+<p>Como vemos, todos las columnas son de tipo de dato Objeto (lo que Pandas considera como una cadena de caracteres o String). Como Object es muy amplio, necesitamos definir el tipo de dato correcto a cada columna para que luego se realizar operaciones con los datos.</p>
+<p>Aquí va la <strong>primera opción</strong> para hacerlo, reusando la variable <code>numeric_cols</code> usada líneas arriba.</p>
+<div id="cell-33" class="cell" data-outputid="fafb50c9-dd89-42cf-bb5a-3d4e43545431">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Asignar el tipo de dato numérico a columnas en variable</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>censo_trujillo[numeric_cols] <span class="op">=</span> censo_trujillo[numeric_cols].<span class="bu">apply</span>(pd.to_numeric)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificamos que las columnas con números tengan el tipo de dato numérico asignado</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>censo_trujillo.dtypes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>Distrito     object
+Hogares       int64
+Viviendas     int64
+Población     int64
+dtype: object</code></pre>
+</div>
+</div>
+<p>Como ves, nuestras columnas con números ya tienen el formato correcto, pero la columna Distrito aún se mantiene como <code>Object</code>. Aunque no habría mayor inconveniente, es mejor especificar que datos contiene cada columna.</p>
+<p>Aquí va la <strong>seguida opción</strong> para cambiar el tipo de dato a múltiples columnas.</p>
+<div id="cell-35" class="cell" data-outputid="18937076-cdd6-4d46-8b93-b18e6e618267">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creamos diccionario y pasamos múltiples columnas con el tipo de dato a asignar</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>convert_dict <span class="op">=</span> {</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Distrito'</span>: <span class="st">'string'</span>,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Hogares'</span>: <span class="st">'int'</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Viviendas'</span>: <span class="st">'int'</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Población'</span>: <span class="st">'int'</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>censo_trujillo <span class="op">=</span> censo_trujillo.astype(convert_dict)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificamos que las columnas con números tengan el tipo de dato numérico asignado</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>censo_trujillo.dtypes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<pre><code>Distrito     string
+Hogares       int64
+Viviendas     int64
+Población     int64
+dtype: object</code></pre>
+</div>
+</div>
+</section>
+<section id="fase-3-guardado-del-conjunto-de-datos" class="level2">
+<h2 class="anchored" data-anchor-id="fase-3-guardado-del-conjunto-de-datos">Fase 3: Guardado del Conjunto de Datos</h2>
+<p>Por fin, una ves los datos están limpios y con el tipo de dato correcto, vamos a guardarlos en formato CSV para usarlos luego.</p>
+<div id="cell-38" class="cell" data-outputid="f4c39a28-8323-44c4-fecb-8e969f3408f4">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Guarda Dataframe a archivo CSV</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>censo_trujillo.to_csv(<span class="st">'censo_provincia_trujillo_2017.csv'</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Leamos el archivo para verificar su creacion</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>pd.read_csv(<span class="st">'censo_provincia_trujillo_2017.csv'</span>).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">UBIGEO</th>
+<th data-quarto-table-cell-role="th">Distrito</th>
+<th data-quarto-table-cell-role="th">Hogares</th>
+<th data-quarto-table-cell-role="th">Viviendas</th>
+<th data-quarto-table-cell-role="th">Población</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>130101</td>
+<td>Trujillo</td>
+<td>87963</td>
+<td>82236</td>
+<td>314939</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>130102</td>
+<td>El Porvenir</td>
+<td>57878</td>
+<td>50805</td>
+<td>190461</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>130103</td>
+<td>Florencia De Mora</td>
+<td>7777</td>
+<td>8635</td>
+<td>37262</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<p>Si lo trabajaste en <a href="https://jupyter.org/">Jupyter Notebook</a> o tu <a href="https://code.visualstudio.com/">Editor de Código Favorito</a>, debe estar ubicado en la misma carpeta donde corriste tu archivo <code>.pynb</code>. Pero, si lo trabajaste en <a href="https://colab.research.google.com/">Google Colab</a> (como yo), puedes usar la biblioteca <code>files</code> para descargar el archivo en la computadora donde estés trabajando.</p>
+<div id="cell-40" class="cell" data-scrolled="true" data-outputid="c17970f1-ce9e-4b99-e6c3-25d4418e6794">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cargar o descargar archivos</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> google.colab <span class="im">import</span> files</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Descarga archivo con datos de tabla</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>files.download(<span class="st">"censo_provincia_trujillo_2017.csv"</span>)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Listo, en un momento saldrá la opción "Guardar Como" para descargar el archivo...'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/javascript">
+
+    async function download(id, filename, size) {
+      if (!google.colab.kernel.accessAllowed) {
+        return;
+      }
+      const div = document.createElement('div');
+      const label = document.createElement('label');
+      label.textContent = `Downloading "${filename}": `;
+      div.appendChild(label);
+      const progress = document.createElement('progress');
+      progress.max = size;
+      div.appendChild(progress);
+      document.body.appendChild(div);
+
+      const buffers = [];
+      let downloaded = 0;
+
+      const channel = await google.colab.kernel.comms.open(id);
+      // Send a message to notify the kernel that we're ready.
+      channel.send({})
+
+      for await (const message of channel.messages) {
+        // Send a message to notify the kernel that we're ready.
+        channel.send({})
+        if (message.buffers) {
+          for (const buffer of message.buffers) {
+            buffers.push(buffer);
+            downloaded += buffer.byteLength;
+            progress.value = downloaded;
+          }
+        }
+      }
+      const blob = new Blob(buffers, {type: 'application/binary'});
+      const a = document.createElement('a');
+      a.href = window.URL.createObjectURL(blob);
+      a.download = filename;
+      div.appendChild(a);
+      a.click();
+      div.remove();
+    }
+  
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/javascript">
+download("download_8d11e8d1-af1f-4c4d-b71b-e88679079401", "censo_provincia_trujillo_2017.csv", 430)
+</script>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Listo, en un momento saldrá la opción "Guardar Como" para descargar el archivo...</code></pre>
+</div>
+</div>
+<p>¡Genial! Ya tenemos los datos de una tabla de <strong>Wikipedia</strong> lista para su uso. Aunque la tabla extraida es pequeña en dimensión, esta forma de trabajo puedes aplicarla para extraer cualquier tabla que encuentres interesante, ya sea de <strong>Wikipedia</strong> o de cualquier otra página web que contenga tablas HTML.</p>
+</section>
+<section id="resumiendo-lo-realizado" class="level2">
+<h2 class="anchored" data-anchor-id="resumiendo-lo-realizado">Resumiendo lo realizado</h2>
+<ul>
+<li>Leímos las tablas HTML de una página de Wikipedia</li>
+<li>Removimos los espacios en formato Unicode que impedían la conversión al tipo de dato correcto</li>
+<li>Convertimos el tipo de dato de todas las columnas al correcto</li>
+<li>Guardamos la tabla extraída como formato csv para su posterior utilización</li>
+<li>Finalmente, descargamos el archivo csv en la computadora de trabajo</li>
+</ul>
+<p>¡Espera! Una cosa más, como estámos en el mes de diciembre, te regalo este pensamiento:</p>
+<blockquote class="blockquote">
+<p>Si lo lees y lo entiendes está genial, aunque eso no te asegura haberlo aprendido. Para <strong>dominarlo</strong> necesitas <strong>practicarlo</strong>.</p>
+</blockquote>
+<p>Por eso, te sugiero que guardes este artículo en tus <strong>Favoritos</strong> para que lo practiques luego. O si quieres practicarlo ya mismo, aquí te dejo el <a href="https://colab.research.google.com/drive/1C0zfNmh151uKtssr4bbvAjxTZjqJ6NtU?usp=sharing">artículo en Google Colab</a>, donde podrás abrir y correr el código <strong>sin necesidad de instalar nada</strong>, solo tu navegador web y tus ganas de aprender.</p>
+<p>Si te gustó, puedes <a href="https://medium.com/@mrenrique">ver mis otras publicaciones</a>, seguro te serán de utilidad. Si gustas apoyarme, comparte este artículo en tus <strong>Redes Sociales</strong> (Facebook, Linkedint, Twitter) o si estás de buen ánimo, <a href="https://www.patreon.com/mrenrique"><strong>invítame una taza de café</strong></a> ☕. Nos vemos 🏃💨</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/mrenrique\.github\.io\/projects\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
